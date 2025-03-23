@@ -172,3 +172,8 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Files to ignore
+.DS_Store
+archive_query_results_
+no_data_objects_
