@@ -54,7 +54,7 @@ def resolve_to_simbad_id(identifier):
         return None
 
 
-# Query Simbad for magnitudes using resolved identifiers
+# Query Simbad for magnitudes using resolved identifiers- individiual
 for i, name in enumerate(two_mass_names):
     resolved_id = resolve_to_simbad_id(name)
     if resolved_id:
@@ -99,17 +99,17 @@ print(K_mags.count(None))
 
 # From this list, save a new list of 2MASS names and magnitudes to a new file where the magnitudes are below a certain limit
 # define limits
-G_limit = 11
+G_limit = 10
 H_limit = 8
 
 # Get new list of 2MASS names and magnitudes
 new_list = []
 for i in range(len(two_mass_names)):
     if G_mags[i] is not None and H_mags[i] is not None:
-        if G_mags[i] < G_limit and H_mags[i] < H_limit:
+        if G_mags[i] > G_limit and H_mags[i] < H_limit:
             new_list.append((two_mass_names[i], G_mags[i], J_mags[i], H_mags[i], K_mags[i]))
 
 # Write the new list to a file
-with open(f'taurus_sources_re.txt', 'w') as file:
+with open(f'taurus_sources_rev.txt', 'w') as file:
     for item in new_list:
         file.write(f"{item[0]} {item[1]} {item[2]} {item[3]} {item[4]}\n")
