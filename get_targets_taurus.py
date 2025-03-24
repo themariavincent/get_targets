@@ -1,18 +1,20 @@
 from astroquery.simbad import Simbad
 
-# Configure Simbad to include J, H, and K magnitudes
-Simbad.add_votable_fields('flux(G)', 'flux(J)', 'flux(H)', 'flux(K)')
+# Configure Simbad to include imp data fields
+Simbad.add_votable_fields('ra', 'dec', 'G', 'J', 'H', 'K')
 
 
 # Define the starting line
 start_line = "                                      J040132.08+260733.2                         60.383698 26.125894 UKIDSS  M9.5                                  1                   M9.5"
 
 # Read the file
-with open(f'taurus_sources.txt', 'r') as file:
+with open('taurus_sources.txt', 'r') as file:
     lines = file.readlines()
 
 # Define empty lists
 two_mass_names = []
+ra = []
+dec = []
 G_mags = []
 J_mags = []
 H_mags = []
@@ -61,55 +63,57 @@ for i, name in enumerate(two_mass_names):
         try:
             result_table = Simbad.query_object(resolved_id)
             if result_table is not None and len(result_table) > 0:
-                G_mag = result_table['FLUX_G'][0]
-                J_mag = result_table['FLUX_J'][0]
-                H_mag = result_table['FLUX_H'][0]
-                K_mag = result_table['FLUX_K'][0]
-                G_mags.append(G_mag)
-                J_mags.append(J_mag)
-                H_mags.append(H_mag)
-                K_mags.append(K_mag)
-                
+                ra.append(result_table['ra'][0])
+                dec.append(result_table['dec'][0])
+                G_mags.append(result_table['G'][0])
+                J_mags.append(result_table['J'][0])
+                H_mags.append(result_table['H'][0])
+                K_mags.append(result_table['K'][0])
             else:
                 print(f"No data found in Simbad for {resolved_id} (resolved from {name})")
+                ra.append(None)
+                dec.append(None)
                 G_mags.append(None)
                 J_mags.append(None)
                 H_mags.append(None)
                 K_mags.append(None)
         except Exception as e:
             print(f"Error retrieving data for {resolved_id} (resolved from {name}): {e}")
+            ra.append(None)
+            dec.append(None)
             G_mags.append(None)
             J_mags.append(None)
             H_mags.append(None)
             K_mags.append(None)
     else:
         print(f"Could not resolve {name} to a Simbad identifier")
+        ra.append(None)
+        dec.append(None)
         G_mags.append(None)
         J_mags.append(None)
         H_mags.append(None)
         K_mags.append(None)
 
-print(two_mass_names[2], G_mags[2], J_mags[2], H_mags[2], K_mags[2])
-
-# Check how many Nones
-print(G_mags.count(None))
-print(J_mags.count(None))
-print(H_mags.count(None))
-print(K_mags.count(None))
+# # Uncomment lines 99-104 for checks
+# print(two_mass_names[2], G_mags[2], J_mags[2], H_mags[2], K_mags[2])
+# # Check how many Nones
+# print(ra.count(None), dec.count(None), G_mags.count(None), J_mags.count(None), H_mags.count(None), K_mags.count(None))
 
 # From this list, save a new list of 2MASS names and magnitudes to a new file where the magnitudes are below a certain limit
 # define limits
-G_limit = 10
-H_limit = 8
+G_limit = float(input("Enter the G magnitude limit: "))
+H_limit = float(input("Enter the H magnitude limit: "))
 
 # Get new list of 2MASS names and magnitudes
 new_list = []
 for i in range(len(two_mass_names)):
     if G_mags[i] is not None and H_mags[i] is not None:
         if G_mags[i] > G_limit and H_mags[i] < H_limit:
-            new_list.append((two_mass_names[i], G_mags[i], J_mags[i], H_mags[i], K_mags[i]))
+            new_list.append((two_mass_names[i], ra[i], dec[i], G_mags[i], J_mags[i], H_mags[i], K_mags[i]))
 
 # Write the new list to a file
-with open(f'taurus_sources_rev.txt', 'w') as file:
+with open('taurus_sources_rev.txt', 'w') as file:
     for item in new_list:
-        file.write(f"{item[0]} {item[1]} {item[2]} {item[3]} {item[4]}\n")
+        file.write(f"{item[0]} {item[1]} {item[2]} {item[3]} {item[4]} {item[5]} {item[6]}\n")
+print("New file 'taurus_sources_rev.txt' created successfully.")
+# print(new_list)
