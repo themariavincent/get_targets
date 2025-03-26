@@ -41,9 +41,6 @@ def resolve_to_simbad_id(identifier):
 # Increase timeout duration
 Simbad.TIMEOUT = 300  # Set timeout to 5 minutes
 
-# Configure Simbad to include G, J, H, and K magnitudes
-Simbad.add_votable_fields('flux(G)', 'flux(J)', 'flux(H)', 'flux(K)')
-
 # Batch query Simbad for magnitudes using all 2MASS names at once
 try:
     result_table = Simbad.query_objects(two_mass_names)  # Batch query

@@ -56,5 +56,5 @@ orion_ra_formatted = [f"{float(ra):.3f}" for ra in orion_ra]
 common_orion = set(ra_orion_formatted).intersection(orion_ra_formatted)
 print(f"Common Orion: {common_orion}")
 
-print(ra_orion_formatted)
-print(orion_ra_formatted)
+# print(ra_orion_formatted)
+# print(orion_ra_formatted)
