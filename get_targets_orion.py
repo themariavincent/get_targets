@@ -1,14 +1,14 @@
 from astroquery.simbad import Simbad
 import csv
-import pandas as pd
-import time
-from astroquery.simbad import Simbad
+import os
 
 # Configure Simbad to include imp data fields
 Simbad.add_votable_fields('ra', 'dec', 'G', 'J', 'H', 'K')
 
+base_path = os.path.dirname(__file__)
+
 # Read the file
-with open('orion_sources.tsv', 'r') as tsvfile:
+with open(os.path.join(base_path, 'orion_sources.tsv'), 'r') as tsvfile:
     tsvreader = csv.reader(tsvfile, delimiter='\t')
     data = list(tsvreader)[46:]
 
@@ -81,8 +81,8 @@ for i in range(len(two_mass_names)):
             new_list.append((two_mass_names[i], ra[i], dec[i], G_mags[i], J_mags[i], H_mags[i], K_mags[i]))
 
 # Write the new list to a file
-with open('orion_sources_rev.txt', 'w') as file:
+with open(os.path.join(base_path, 'orion_sources_rev.txt'), 'w') as file:
     for item in new_list:
         file.write(f"{item[0]} {item[1]} {item[2]} {item[3]} {item[4]} {item[5]} {item[6]}\n")
-print("New file 'taurus_sources_rev.txt' created successfully.")
+print("New file 'orion_sources_rev.txt' created successfully.")
 # print(new_list)

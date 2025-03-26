@@ -81,7 +81,10 @@ def main(file_path,optional_tag=None):
 
     # Save the results in a text file
     now = datetime.now().strftime("%Y%m%d_%H%M%S")
-    with open(f"archive_query_results_{now}.txt", "w") as f:
+    date = datetime.now().strftime("%Y%m%d")
+    query_dir = os.path.join(os.path.dirname(__file__), 'query_results',date)
+    os.makedirs(query_dir, exist_ok=True)
+    with open(os.path.join(query_dir, f"archive_query_results_{now}.txt"), "w") as f:
         f.write("SPHERE Results:\n")
         for obj_name, result in sphere_results.items():
             f.write(f"{obj_name}:\n")
@@ -108,16 +111,14 @@ def main(file_path,optional_tag=None):
     no_data_dec = [dec[i] for i in range(len(object_names))
                    if object_names[i] in no_data_objects]
     
-    fn_no_data_objects = f"no_data_objects_{now}.txt"
+    data_list_dir = os.path.join(os.path.dirname(__file__), 'data_lists',date)
+    os.makedirs(data_list_dir, exist_ok=True)
+    fn_no_data_objects = os.path.join(data_list_dir, f"no_data_objects_{now}.txt")
     if optional_tag:
-        fn_no_data_objects = f"no_data_objects_{optional_tag}_{now}.txt"
+        fn_no_data_objects = os.path.join(data_list_dir, f"no_data_objects_{optional_tag}_{now}.txt")
     with open(fn_no_data_objects, "w") as f:
-        for obj_name in no_data_objects:
-            f.write(f"{obj_name}\n")
-        for ra in no_data_ra:
-            f.write(f"{ra}\n")
-        for dec in no_data_dec:
-            f.write(f"{dec}\n")
+        for obj_name, ra_val, dec_val in zip(no_data_objects, no_data_ra, no_data_dec):
+            f.write(f"{obj_name} {ra_val} {dec_val}\n")
     print("Results saved in the archive_query_results textfile.")
     print("Objects with no data found saved in the no_data_objects textfile.")
     print("Done.")
