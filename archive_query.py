@@ -123,7 +123,7 @@ def main(file_path,optional_tag=None):
                   if object_names[i] in no_data_objects]
     no_data_dec = [dec[i] for i in range(len(object_names))
                    if object_names[i] in no_data_objects]
-    
+
     data_list_dir = os.path.join(os.path.dirname(__file__), 'data_lists',date)
     os.makedirs(data_list_dir, exist_ok=True)
     fn_no_data_objects = os.path.join(data_list_dir, f"no_data_objects_{now}.txt")
