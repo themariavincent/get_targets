@@ -2,6 +2,7 @@ import os
 from astroquery.eso import Eso
 from astroquery.gemini import Observations
 from datetime import datetime
+import csv
 
 
 def query_sphere(object_names):
@@ -65,15 +66,27 @@ def main(file_path,optional_tag=None):
         print(f"File '{file_path}' not found!")
         return
 
-    # Read object names from file
-    with open(file_path, 'r') as file:
-        rows = [line.strip() for line in file if line.strip()]
-        object_names = [' '.join(row.split()[:2]) for row in rows]
-        ra = [row.split()[2] for row in rows]
-        dec = [row.split()[3] for row in rows]
+    # # Read object names from file
+    # # Uncomment if .txt file
+    # with open(file_path, 'r') as file:
+    #     rows = [line.strip() for line in file if line.strip()]
+    #     object_names = [' '.join(row.split()[:2]) for row in rows]
+    #     ra = [row.split()[2] for row in rows]
+    #     dec = [row.split()[3] for row in rows]
+    # if not object_names:
+    #     print("No object names found in the file.")
+    #     return
+    # # Uncomment if .tsv file
+    with open(file_path, 'r') as tsvfile:
+        tsvreader = csv.reader(tsvfile, delimiter='\t')
+        data = list(tsvreader)
+    object_names = [row[0] for row in data]
+    ra = [row[1] for row in data]
+    dec = [row[2] for row in data]
     if not object_names:
         print("No object names found in the file.")
         return
+    print(object_names)
 
     print("Querying archives for objects...")
     sphere_results = query_sphere(object_names)
@@ -82,7 +95,7 @@ def main(file_path,optional_tag=None):
     # Save the results in a text file
     now = datetime.now().strftime("%Y%m%d_%H%M%S")
     date = datetime.now().strftime("%Y%m%d")
-    query_dir = os.path.join(os.path.dirname(__file__), 'query_results',date)
+    query_dir = os.path.join(os.path.dirname(__file__), 'query_results','archive_query',date)
     os.makedirs(query_dir, exist_ok=True)
     with open(os.path.join(query_dir, f"archive_query_results_{now}.txt"), "w") as f:
         f.write("SPHERE Results:\n")
@@ -125,5 +138,12 @@ def main(file_path,optional_tag=None):
 
 
 if __name__ == "__main__":
-    main(file_path='orion_sources_rev.txt', optional_tag='orion')
-    main(file_path='taurus_sources_rev.txt', optional_tag='taurus')
+    # main(file_path='./disk_survey_data/orion_sources_rev.txt', optional_tag='orion')
+    # main(file_path='./disk_survey_data/taurus_sources_rev.txt', optional_tag='taurus')
+    # main(file_path='./disk_survey_data/orion_vision_sources_rev.tsv', optional_tag='orion_vision')
+    filepath = input('Enter the path to the file containing object names: ')
+    optional_tag = input('Enter an optional tag for the output file (or leave blank): ')
+    if optional_tag.strip() == "":
+        optional_tag = None
+    main(file_path=filepath, optional_tag=optional_tag)
+    print("Done.")
