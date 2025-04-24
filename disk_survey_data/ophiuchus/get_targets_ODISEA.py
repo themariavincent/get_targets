@@ -101,11 +101,13 @@ for i in range(len(names)):
     if H_mags[i] < H_limit:
         new_list.append((names[i], ra[i], dec[i], G_mags[i], J_mags[i], H_mags[i], K_mags[i]))
 
-# Write the new list to a file
-with open(os.path.join(survey_dir, 'ophiuchus_odisea_sources_rev.txt'), 'w') as file:
+# Write the new list to a TSV file
+tsv_path = os.path.join(survey_dir, 'ophiuchus_odisea_sources_rev.tsv')
+with open(tsv_path, 'w') as file:
     for item in new_list:
-        file.write(f"{item[0]} {item[1]} {item[2]} {item[3]} {item[4]} {item[5]} {item[6]}\n")
-print("New file 'ophiuchus_odisea_sources_revs.txt' created successfully.")
+        file.write(f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{item[4]}\t{item[5]}\t{item[6]}\n")
+
+print(f"New TSV file '{os.path.basename(tsv_path)}' created successfully.")
 # print(new_list)
 
 

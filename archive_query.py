@@ -56,7 +56,7 @@ def query_gpi(object_names):
     return results
 
 
-def main(file_path,optional_tag=None):
+def main(file_path, optional_tag=None):
     """
     Main function to query the archives for objects listed in a file.
     :param file_path: Path to the file containing object names.
@@ -81,6 +81,7 @@ def main(file_path,optional_tag=None):
         tsvreader = csv.reader(tsvfile, delimiter='\t')
         data = list(tsvreader)
     object_names = [row[0] for row in data]
+    print(object_names)
     ra = [row[1] for row in data]
     dec = [row[2] for row in data]
     if not object_names:
@@ -124,24 +125,28 @@ def main(file_path,optional_tag=None):
     no_data_dec = [dec[i] for i in range(len(object_names))
                    if object_names[i] in no_data_objects]
 
-    data_list_dir = os.path.join(os.path.dirname(__file__), 'data_lists',date)
+    data_list_dir = os.path.join(os.path.dirname(__file__), 'data_lists', date)
     os.makedirs(data_list_dir, exist_ok=True)
-    fn_no_data_objects = os.path.join(data_list_dir, f"no_data_objects_{now}.txt")
+
+    # Define TSV file path
+    fn_no_data_objects = os.path.join(data_list_dir, f"no_data_objects_{now}.tsv")
     if optional_tag:
-        fn_no_data_objects = os.path.join(data_list_dir, f"no_data_objects_{optional_tag}_{now}.txt")
+        fn_no_data_objects = os.path.join(data_list_dir, f"no_data_objects_{optional_tag}_{now}.tsv")
+    # Write to the TSV file
     with open(fn_no_data_objects, "w") as f:
         for obj_name, ra_val, dec_val in zip(no_data_objects, no_data_ra, no_data_dec):
-            f.write(f"{obj_name} {ra_val} {dec_val}\n")
+            f.write(f"{obj_name}\t{ra_val}\t{dec_val}\n")
     print("Results saved in the archive_query_results textfile.")
-    print("Objects with no data found saved in the no_data_objects textfile.")
-    print("Done.")
+    print("Objects with no data found saved in the no_data_objects TSV file.")
 
 
 if __name__ == "__main__":
     # main(file_path='./disk_survey_data/orion_sources_rev.txt', optional_tag='orion')
     # main(file_path='./disk_survey_data/taurus_sources_rev.txt', optional_tag='taurus')
     # main(file_path='./disk_survey_data/orion_vision_sources_rev.tsv', optional_tag='orion_vision')
+    basepath = os.path.dirname(__file__)
     filepath = input('Enter the path to the file containing object names: ')
+    filepath = os.path.join(basepath, filepath)
     optional_tag = input('Enter an optional tag for the output file (or leave blank): ')
     if optional_tag.strip() == "":
         optional_tag = None
